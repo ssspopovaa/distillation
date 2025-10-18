@@ -1,0 +1,29 @@
+services:
+  nginx:
+    image: nginx:1.27.3
+    container_name: distillation_nginx
+    volumes:
+      - ./:/var/www/
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - 80:80
+    depends_on:
+      - app
+
+  app:
+    build:
+      args:
+        user: container-user
+        uid: 1000
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: distillation_app
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - redis
+    ports:
+      - 5174:5173
+
+  redis:
+    image: redis:7
